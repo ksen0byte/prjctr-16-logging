@@ -32,19 +32,19 @@ This project sets up a Dockerized environment to capture and analyze MySQL slow 
 2. **Setup Filebeat (Index and Kibana Dashboard):**
 
    ```bash
-   docker compose run -it filebeat setup
+   docker compose run --file docker-compose-filebeat-elk.yml -it filebeat setup
    ```
 
 3. **Run Filebeat:**
 
    ```bash
-   docker compose up -d filebeat
+   docker compose up --file docker-compose-filebeat-elk.yml -d filebeat
    ```
 
 4. **Execute a Slow Query in MySQL:**
 
    ```bash
-   docker compose exec -it mysql mysql --user=root --password=example --execute="SELECT SLEEP(3);"
+   docker compose exec --file docker-compose-filebeat-elk.yml -it mysql mysql --user=root --password=example --execute="SELECT SLEEP(3);"
    ```
 
 5. **Result:**
@@ -61,7 +61,7 @@ This project sets up a Dockerized environment to capture and analyze MySQL slow 
 2. **Run Filebeat:**
 
    ```bash
-   docker compose up -d filebeat
+   docker compose up --file docker-compose-filebeat-graylog.yml -d filebeat
    ```
 
 3. **Create Beats Input in Graylog Web Interface.**
@@ -69,7 +69,7 @@ This project sets up a Dockerized environment to capture and analyze MySQL slow 
 4. **Execute a Slow Query in MySQL:**
 
    ```bash
-   docker compose exec -it mysql mysql --user=root --password=example --execute="SELECT SLEEP(3);"
+   docker compose exec --file docker-compose-filebeat-graylog.yml -it mysql mysql --user=root --password=example --execute="SELECT SLEEP(3);"
    ```
 
 5. **Result:**
