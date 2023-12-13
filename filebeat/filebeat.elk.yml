@@ -1,0 +1,23 @@
+filebeat.modules:
+- module: mysql
+  slowlog:
+    enabled: true
+    var.paths: ["/var/app/log/slow-query.log"]
+
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+filebeat.inputs:
+- type: log
+  paths:
+    - /var/app/log/slow-query.log
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  username: "elastic"
+  password: "example"
+
+setup.kibana:
+  host: "kibana:5601"

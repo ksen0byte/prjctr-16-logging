@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: mydb
+    volumes:
+      - ./mysql-slow-logs:/var/log/mysql/
+    command: --slow-query-log=ON --log-output=FILE --slow-query-log-file=/var/log/mysql/slow-query.log --long-query-time=2
+  
+  filebeat:
+    container_name: filebeat
+    image: docker.elastic.co/beats/filebeat:7.17.15
+    entrypoint: filebeat -e -strict.perms=false
+    user: root
+    volumes:
+      - ./filebeat/filebeat.elk.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./mysql-slow-logs:/var/app/log
+    profiles:
+      - manual
+  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  elasticsearch:
+    image: elasticsearch:7.17.15
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=example
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+  
+  kibana:
+    image: kibana:7.17.15
+    ports:
+      - "5601:5601"
+    environment:
+      - KIBANA_PASSWORD=example
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
